@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">BacklightSwitch</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="toggle_button_switch_off">Check to switch backlight off:</string>
+    <string name="toggle_button_switch_on">Uncheck to switch backlight on:</string>
 
 </resources>
