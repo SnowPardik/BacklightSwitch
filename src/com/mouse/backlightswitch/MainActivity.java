@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
@@ -17,9 +18,9 @@ public class MainActivity extends Activity {
 		toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if(isChecked){
-				;
+				Toast.makeText(getApplicationContext(), R.string.message_off, Toast.LENGTH_SHORT).show();;
 			} else{
-				;
+				Toast.makeText(getApplicationContext(), R.string.message_on, Toast.LENGTH_SHORT).show();;
 			}
 		}
 		});	
