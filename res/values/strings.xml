@@ -2,8 +2,8 @@
 <resources>
 
     <string name="app_name">BacklightSwitch</string>
-    <string name="toggle_button_switch_off">Check to switch backlight off:</string>
-    <string name="toggle_button_switch_on">Uncheck to switch backlight on:</string>
+    <string name="toggle_button_switch_off">Tap to switch backlight off</string>
+    <string name="toggle_button_switch_on">Tap to switch backlight on</string>
     <string name="message_off">Backlight is off</string>
     <string name="message_on">Backlight is on</string>
 
