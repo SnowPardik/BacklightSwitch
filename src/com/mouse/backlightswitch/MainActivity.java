@@ -12,10 +12,31 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		setActionOnToggleButtonCheckChanged();		
 	}
 
-private void setActionOnToggleButtonCheckChanged() {
+@Override
+protected void onStart() {
+	super.onStart();
+isBacklightActuallyOn();
+}
+
+private boolean isBacklightActuallyOn() {
+	return true;
+}
+
+@Override
+protected void onResume() {
+	super.onResume();
+	setChecked();
+	onCheckChanged();		
+}
+
+private void setChecked() {
+	ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle_button_switch);
+	toggle.setChecked(!isBacklightActuallyOn());
+}
+
+private void onCheckChanged() {
 	ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle_button_switch);
 toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -35,27 +56,6 @@ private void onChecked() {
 private void onUnchecked() {
 	switchBacklightOn();
 	Toast.makeText(getApplicationContext(), R.string.message_on, Toast.LENGTH_SHORT).show();	
-}
-
-@Override
-protected void onStart() {
-	super.onStart();
-isBacklightActuallyOn();
-}
-
-private boolean isBacklightActuallyOn() {
-	return true;
-}
-
-@Override
-protected void onResume() {
-	super.onResume();
-	setChecked();
-}
-
-private void setChecked() {
-	ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle_button_switch);
-	toggle.setChecked(!isBacklightActuallyOn());
 }
 
 private void switchBacklightOff() {
