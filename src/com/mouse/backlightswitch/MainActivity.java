@@ -12,6 +12,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
+	String brightnessLevel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +54,28 @@ public class MainActivity extends Activity {
 @Override
 protected void onStart() {
 	super.onStart();
+getCurrentBrightnessLevel();
 isBacklightCurrentlyOn();
 setChecked();
+}
+
+private String getCurrentBrightnessLevel() {
+	String path = "/sys/class/leds/wled:backlight/brightness";
+File f = new File(path);
+StringBuilder sb = new StringBuilder();
+String s;
+try {
+FileReader fr = new FileReader(f);
+BufferedReader br = new BufferedReader(fr);
+s = br.readLine();
+br.close();
+		sb.append(s);
+brightnessLevel = sb.toString();
+return brightnessLevel;
+} catch (Exception e) {
+	// TODO: handle exception
+return brightnessLevel;
+}
 }
 
 private boolean isBacklightCurrentlyOn() {
@@ -69,26 +90,11 @@ private void setChecked() {
 @Override
 protected void onResume() {
 	super.onResume();
-	getCurrentBrightnessLevel();
+showCurrentBrightnessLevel(brightnessLevel);
 }
 
-private void getCurrentBrightnessLevel() {
-	String path = "/sys/class/leds/wled:backlight/brightness";
-File f = new File(path);
-StringBuilder sb = new StringBuilder();
-String s;
-String brightnessLevel;
-try {
-FileReader fr = new FileReader(f);
-BufferedReader br = new BufferedReader(fr);
-s = br.readLine();
-br.close();
-		sb.append(s);
-brightnessLevel = sb.toString();
-TextView textView = (TextView) findViewById(R.id.brightness_level);
-textView.setText(brightnessLevel);
-} catch (Exception e) {
-	// TODO: handle exception
-}
+private void showCurrentBrightnessLevel(String brightnessLevel) {
+	TextView textView = (TextView) findViewById(R.id.brightness_level);
+	textView.setText(brightnessLevel);
 }
 }
