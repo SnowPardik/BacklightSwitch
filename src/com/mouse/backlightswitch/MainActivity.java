@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
 protected void onStart() {
 	super.onStart();
 getCurrentBrightnessLevel();
-isBacklightCurrentlyOn();
+isBacklightCurrentlyOff();
 setChecked();
 }
 
@@ -71,20 +71,20 @@ s = br.readLine();
 br.close();
 		sb.append(s);
 brightnessLevel = sb.toString();
-return brightnessLevel;
 } catch (Exception e) {
 	// TODO: handle exception
+}
 return brightnessLevel;
 }
-}
 
-private boolean isBacklightCurrentlyOn() {
-return true;
+private boolean isBacklightCurrentlyOff() {
+String zeroBrightness = "288";
+return brightnessLevel.equals(zeroBrightness);
 }
 
 private void setChecked() {
 	ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle_button_switch);
-	toggle.setChecked(!isBacklightCurrentlyOn());
+	toggle.setChecked(isBacklightCurrentlyOff());
 }
 
 @Override
