@@ -63,13 +63,11 @@ private String getCurrentBrightnessLevel() {
 	String path = "/sys/class/leds/wled:backlight/brightness";
 File f = new File(path);
 StringBuilder sb = new StringBuilder();
-String s;
 try {
 FileReader fr = new FileReader(f);
 BufferedReader br = new BufferedReader(fr);
-s = br.readLine();
+sb.append(br.readLine());
 br.close();
-		sb.append(s);
 brightnessLevel = sb.toString();
 } catch (Exception e) {
 	// TODO: handle exception
