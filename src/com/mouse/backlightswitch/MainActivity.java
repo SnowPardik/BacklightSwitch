@@ -12,14 +12,12 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
-	String brightnessLevel;
+private static final String PATH = "/sys/class/leds/wled:backlight/brightness"; 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//TextView textView = (TextView) findViewById(R.id.brightness_level);
-		//textView.setText("Brightness level");
 		setToggleListener();		
 	}
 
@@ -54,14 +52,14 @@ public class MainActivity extends Activity {
 @Override
 protected void onStart() {
 	super.onStart();
-getCurrentBrightnessLevel();
-isBacklightCurrentlyOff();
-setChecked();
+	String brightnessLevel = getCurrentBrightnessLevel(); 
+setChecked(isBacklightCurrentlyOff(brightnessLevel));
+showCurrentBrightnessLevel(brightnessLevel);
 }
 
 private String getCurrentBrightnessLevel() {
-	String path = "/sys/class/leds/wled:backlight/brightness";
-File f = new File(path);
+File f = new File(PATH);
+String brightnessLevel = "";
 StringBuilder sb = new StringBuilder();
 try {
 FileReader fr = new FileReader(f);
@@ -75,20 +73,14 @@ brightnessLevel = sb.toString();
 return brightnessLevel;
 }
 
-private boolean isBacklightCurrentlyOff() {
+private boolean isBacklightCurrentlyOff(String brightnessLevel) {
 String zeroBrightness = "288";
 return brightnessLevel.equals(zeroBrightness);
 }
 
-private void setChecked() {
+private void setChecked(boolean backlightIsCurrentlyOff) {
 	ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle_button_switch);
-	toggle.setChecked(isBacklightCurrentlyOff());
-}
-
-@Override
-protected void onResume() {
-	super.onResume();
-showCurrentBrightnessLevel(brightnessLevel);
+	toggle.setChecked(backlightIsCurrentlyOff);
 }
 
 private void showCurrentBrightnessLevel(String brightnessLevel) {
