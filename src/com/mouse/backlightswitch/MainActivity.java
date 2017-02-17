@@ -13,7 +13,7 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
 private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
-private String brightnessLevelToBeSet;
+private String brightnessLevelToBeRestored;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,22 +35,22 @@ private String brightnessLevelToBeSet;
 	}
 
 	private void onChecked() {
-		switchBacklight(brightnessLevelToBeSet);
-	Toast.makeText(getApplicationContext(), R.string.message_off, Toast.LENGTH_SHORT).show();
+		Toast.makeText(getApplicationContext(), R.string.message_off, Toast.LENGTH_SHORT).show();
+		switchBacklightOff();
 	}
 
 	private void onUnchecked() {
-		switchBacklight(brightnessLevelToBeSet);
-	Toast.makeText(getApplicationContext(), R.string.message_on, Toast.LENGTH_SHORT).show();	
+		Toast.makeText(getApplicationContext(), R.string.message_on, Toast.LENGTH_SHORT).show();
+		switchBacklightOn();
 	}
 
-	private void switchBacklight(String brightnessLevelToBeSet) {
-		TextView textView = (TextView) findViewById(R.id.brightness_level);
-textView.setText(brightnessLevelToBeSet);
+	private void switchBacklightOff() {
+TextView textView = (TextView) findViewById(R.id.brightness_level);
+textView.setText("Restore" + brightnessLevelToBeRestored);
 	}
 
-	//private void switchBacklightOn() {
-	//}
+private void switchBacklightOn() {
+}
 
 @Override
 protected void onStart() {
@@ -80,7 +80,7 @@ private boolean isBacklightCurrentlyOff(String brightnessLevel) {
 String zeroBrightness = "0";
 boolean backlightIsCurrentlyOff =  brightnessLevel.equals(zeroBrightness);
 if (backlightIsCurrentlyOff == false)
-	saveBrightnessLevelToBeSet(brightnessLevel);
+	saveBrightnessLevelToBeRestored(brightnessLevel);
 return backlightIsCurrentlyOff;
 }
 
@@ -90,13 +90,13 @@ private void setChecked(boolean backlightIsCurrentlyOff) {
 }
 
 private void showCurrentBrightnessLevel(String brightnessLevel) {
-	TextView textView = (TextView) findViewById(R.id.brightness_level);
-	textView.setText(brightnessLevel);
+TextView textView = (TextView) findViewById(R.id.brightness_level);
+textView.setText(brightnessLevel);
 }
 
-private String saveBrightnessLevelToBeSet(String brightnessLevel) {
-brightnessLevelToBeSet = brightnessLevel;
-return brightnessLevelToBeSet;
+private String saveBrightnessLevelToBeRestored(String brightnessLevel) {
+brightnessLevelToBeRestored = brightnessLevel;
+return brightnessLevelToBeRestored;
 }
 }
 
