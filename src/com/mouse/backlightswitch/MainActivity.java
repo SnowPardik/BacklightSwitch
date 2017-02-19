@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -75,10 +74,9 @@ private String getBrightnessLevelToBeRestored(String brightnessLevel) {
 			switchBacklightOn();
 } else {
 Toast.makeText(getApplicationContext(), R.string.message_off, Toast.LENGTH_SHORT).show();
-			switchButton.setText(R.string.button_switch_on);
+			switchButton.setText("restore" + brightnessLevelToBeRestored);
+			//switchButton.setText(R.string.button_switch_on);
 			switchBacklightOff();
-TextView textView = (TextView) findViewById(R.id.brightness_level);
-textView.setText("Restore" + brightnessLevelToBeRestored);
 		}
 	}
 
