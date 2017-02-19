@@ -11,14 +11,12 @@
     <TextView
         android:id="@+id/brightness_level"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="edit_text">
+        android:layout_height="wrap_content">
     </TextView>
-    <ToggleButton
-        android:id="@+id/toggle_button_switch"
+    <Button
+        android:id="@+id/switch_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textOff="@string/toggle_button_switch_off"
-                        android:textOn="@string/toggle_button_switch_on">
-    </ToggleButton>
+                        android:onClick="switchBacklight">
+    </Button>
 </LinearLayout>

@@ -6,97 +6,85 @@ import java.io.FileReader;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.CompoundButton;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
-private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
-private String brightnessLevelToBeRestored;
+	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
+	private String brightnessLevelToBeRestored;
+	private boolean backlightIsCurrentlyOff;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		setToggleListener();		
-}
-
-	private void setToggleListener() {
-		ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle_button_switch);
-	toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			if(isChecked)
-				onChecked();
-			else
-				onUnchecked();
-				}
-		});	
 	}
 
-	private void onChecked() {
-		Toast.makeText(getApplicationContext(), R.string.message_off, Toast.LENGTH_SHORT).show();
-		switchBacklightOff();
+	@Override
+	protected void onStart() {
+		super.onStart();
+		String brightnessLevel = getCurrentBrightnessLevel();
+		isBacklightCurrentlyOff(brightnessLevel);
+		setSwitchButtonText();
 	}
 
-	private void onUnchecked() {
-		Toast.makeText(getApplicationContext(), R.string.message_on, Toast.LENGTH_SHORT).show();
-		switchBacklightOn();
+	private String getCurrentBrightnessLevel() {
+		File f = new File(PATH);
+		String brightnessLevel = "";
+		StringBuilder sb = new StringBuilder();
+		try {
+			FileReader fr = new FileReader(f);
+			BufferedReader br = new BufferedReader(fr);
+			sb.append(br.readLine());
+			br.close();
+			brightnessLevel = sb.toString();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return brightnessLevel;
 	}
 
-	private void switchBacklightOff() {
+	private void isBacklightCurrentlyOff(String brightnessLevel) {
+		String zeroBrightness = "0";
+		backlightIsCurrentlyOff = brightnessLevel.equals(zeroBrightness);
+		if (backlightIsCurrentlyOff == false)
+			getBrightnessLevelToBeRestored(brightnessLevel);
+	}
+
+private String getBrightnessLevelToBeRestored(String brightnessLevel) {
+		brightnessLevelToBeRestored = brightnessLevel;
+		return brightnessLevelToBeRestored;
+	}
+
+	private void setSwitchButtonText() {
+		Button switchButton = (Button) findViewById(R.id.switch_button);
+		if (backlightIsCurrentlyOff) {
+			switchButton.setText(R.string.button_switch_on);
+		} else {
+			switchButton.setText(R.string.button_switch_off);
+		}
+	}
+
+	public void switchBacklight(View view) {
+		Button switchButton = (Button) findViewById(R.id.switch_button);
+		if (backlightIsCurrentlyOff) {
+			Toast.makeText(getApplicationContext(), R.string.message_on, Toast.LENGTH_SHORT).show();
+			switchButton.setText(R.string.button_switch_off);
+			switchBacklightOn();
+} else {
+Toast.makeText(getApplicationContext(), R.string.message_off, Toast.LENGTH_SHORT).show();
+			switchButton.setText(R.string.button_switch_on);
+			switchBacklightOff();
 TextView textView = (TextView) findViewById(R.id.brightness_level);
 textView.setText("Restore" + brightnessLevelToBeRestored);
+		}
 	}
 
-private void switchBacklightOn() {
+public void switchBacklightOn() {
 }
 
-@Override
-protected void onStart() {
-	super.onStart();
-	String brightnessLevel = getCurrentBrightnessLevel(); 
-setChecked(isBacklightCurrentlyOff(brightnessLevel));
-showCurrentBrightnessLevel(brightnessLevel);
-}
-
-private String getCurrentBrightnessLevel() {
-File f = new File(PATH);
-String brightnessLevel = "";
-StringBuilder sb = new StringBuilder();
-try {
-FileReader fr = new FileReader(f);
-BufferedReader br = new BufferedReader(fr);
-sb.append(br.readLine());
-br.close();
-brightnessLevel = sb.toString();
-} catch (Exception e) {
-	// TODO: handle exception
-}
-return brightnessLevel;
-}
-
-private boolean isBacklightCurrentlyOff(String brightnessLevel) {
-String zeroBrightness = "0";
-boolean backlightIsCurrentlyOff =  brightnessLevel.equals(zeroBrightness);
-if (backlightIsCurrentlyOff == false)
-	saveBrightnessLevelToBeRestored(brightnessLevel);
-return backlightIsCurrentlyOff;
-}
-
-private void setChecked(boolean backlightIsCurrentlyOff) {
-	ToggleButton toggle = (ToggleButton) findViewById(R.id.toggle_button_switch);
-	toggle.setChecked(backlightIsCurrentlyOff);
-}
-
-private void showCurrentBrightnessLevel(String brightnessLevel) {
-TextView textView = (TextView) findViewById(R.id.brightness_level);
-textView.setText(brightnessLevel);
-}
-
-private String saveBrightnessLevelToBeRestored(String brightnessLevel) {
-brightnessLevelToBeRestored = brightnessLevel;
-return brightnessLevelToBeRestored;
+	public void switchBacklightOff() {
 }
 }
-
