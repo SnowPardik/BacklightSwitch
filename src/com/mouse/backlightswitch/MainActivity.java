@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
 		super.onStart();
 		String brightnessLevel = getCurrentBrightnessLevel();
 		isBacklightCurrentlyOff(brightnessLevel);
-		setSwitchButtonText();
+		setSwitchButtonAndToastTexts();
 	}
 
 	private String getCurrentBrightnessLevel() {
@@ -57,26 +57,22 @@ private String getBrightnessLevelToBeRestored(String brightnessLevel) {
 		return brightnessLevelToBeRestored;
 	}
 
-	private void setSwitchButtonText() {
+	private void setSwitchButtonAndToastTexts() {
 		Button switchButton = (Button) findViewById(R.id.switch_button);
 		if (backlightIsCurrentlyOff) {
-			switchButton.setText(R.string.button_switch_on);
+			Toast.makeText(getApplicationContext(), R.string.message_off, Toast.LENGTH_SHORT).show();
+			switchButton.setText("Restore" + brightnessLevelToBeRestored);
 		} else {
+			Toast.makeText(getApplicationContext(), R.string.message_on, Toast.LENGTH_SHORT).show();
 			switchButton.setText(R.string.button_switch_off);
 		}
 	}
 
 	public void switchBacklight(View view) {
-		Button switchButton = (Button) findViewById(R.id.switch_button);
 		if (backlightIsCurrentlyOff) {
-			Toast.makeText(getApplicationContext(), R.string.message_on, Toast.LENGTH_SHORT).show();
-			switchButton.setText(R.string.button_switch_off);
 			switchBacklightOn();
 } else {
-Toast.makeText(getApplicationContext(), R.string.message_off, Toast.LENGTH_SHORT).show();
-			switchButton.setText("restore" + brightnessLevelToBeRestored);
-			//switchButton.setText(R.string.button_switch_on);
-			switchBacklightOff();
+switchBacklightOff();
 		}
 	}
 
