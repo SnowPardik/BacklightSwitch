@@ -4,7 +4,4 @@
     <string name="app_name">BacklightSwitch</string>
     <string name="button_switch_off">Switch backlight off</string>
     <string name="button_switch_on">Switch backlight on</string>
-    <string name="message_off">Backlight is off</string>
-    <string name="message_on">Backlight is on</string>
-
-</resources>
+    </resources>

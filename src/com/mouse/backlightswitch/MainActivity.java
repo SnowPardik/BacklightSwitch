@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
@@ -30,7 +29,7 @@ public class MainActivity extends Activity {
 	private void defineSwitchButton() {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		isBacklightCurrentlyOff(brightnessLevel);
-		setSwitchButtonAndToastTexts();
+		setSwitchButtonText();
 	}
 
 	private String getCurrentBrightnessLevel() {
@@ -61,13 +60,11 @@ public class MainActivity extends Activity {
 		return brightnessLevelToBeRestored;
 	}
 
-	private void setSwitchButtonAndToastTexts() {
+	private void setSwitchButtonText() {
 		Button switchButton = (Button) findViewById(R.id.switch_button);
 		if (backlightIsCurrentlyOff) {
-			Toast.makeText(getApplicationContext(), R.string.message_off, Toast.LENGTH_SHORT).show();
 			switchButton.setText("Restore" + brightnessLevelToBeRestored);
 		} else {
-			Toast.makeText(getApplicationContext(), R.string.message_on, Toast.LENGTH_SHORT).show();
 			switchButton.setText(R.string.button_switch_off);
 		}
 	}
