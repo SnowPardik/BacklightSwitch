@@ -24,6 +24,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		defineSwitchButton();
+	}
+
+	private void defineSwitchButton() {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		isBacklightCurrentlyOff(brightnessLevel);
 		setSwitchButtonAndToastTexts();
@@ -52,7 +56,7 @@ public class MainActivity extends Activity {
 			getBrightnessLevelToBeRestored(brightnessLevel);
 	}
 
-private String getBrightnessLevelToBeRestored(String brightnessLevel) {
+	private String getBrightnessLevelToBeRestored(String brightnessLevel) {
 		brightnessLevelToBeRestored = brightnessLevel;
 		return brightnessLevelToBeRestored;
 	}
@@ -71,14 +75,16 @@ private String getBrightnessLevelToBeRestored(String brightnessLevel) {
 	public void switchBacklight(View view) {
 		if (backlightIsCurrentlyOff) {
 			switchBacklightOn();
-} else {
-switchBacklightOff();
+			defineSwitchButton();
+		} else {
+			switchBacklightOff();
+			defineSwitchButton();
 		}
 	}
 
-public void switchBacklightOn() {
-}
+	public void switchBacklightOn() {
+	}
 
 	public void switchBacklightOff() {
-}
+	}
 }
