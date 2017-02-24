@@ -19,6 +19,22 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	}
+	public void switchBacklight(View view) {
+		if (backlightIsCurrentlyOff) {
+			switchBacklightOn();
+			defineSwitchButton();
+		} else {
+			switchBacklightOff();
+			defineSwitchButton();
+		}
+	}
+
+	public void switchBacklightOn() {
+	}
+
+	public void switchBacklightOff() {
+	}
+
 
 	@Override
 	protected void onStart() {
@@ -67,21 +83,5 @@ public class MainActivity extends Activity {
 		} else {
 			switchButton.setText(R.string.button_switch_off);
 		}
-	}
-
-	public void switchBacklight(View view) {
-		if (backlightIsCurrentlyOff) {
-			switchBacklightOn();
-			defineSwitchButton();
-		} else {
-			switchBacklightOff();
-			defineSwitchButton();
-		}
-	}
-
-	public void switchBacklightOn() {
-	}
-
-	public void switchBacklightOff() {
 	}
 }
