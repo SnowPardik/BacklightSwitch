@@ -19,6 +19,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	}
+
 	public void switchBacklight(View view) {
 		if (backlightIsCurrentlyOff) {
 			switchBacklightOn();
@@ -34,7 +35,6 @@ public class MainActivity extends Activity {
 
 	public void switchBacklightOff() {
 	}
-
 
 	@Override
 	protected void onStart() {
