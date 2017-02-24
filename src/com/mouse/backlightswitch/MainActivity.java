@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +21,18 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		createNotification();
 	}
+
+public void  createNotification() {
+int notification_id = 1;
+	CharSequence t = "Notification";
+	CharSequence s = "Here is a notification"; 
+	Context c = getApplicationContext();
+Notification n = new Notification.Builder(c).setContentTitle(t).setContentText(s).setSmallIcon(R.drawable.ic_launcher).build();
+NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+nm.notify(notification_id, n);
+}
 
 	public void switchBacklight(View view) {
 		if (backlightIsCurrentlyOff) {
