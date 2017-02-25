@@ -24,15 +24,16 @@ public class MainActivity extends Activity {
 		createNotification();
 	}
 
-public void  createNotification() {
-int notification_id = 1;
-	CharSequence t = "Notification";
-	CharSequence s = "Here is a notification"; 
-	Context c = getApplicationContext();
-Notification n = new Notification.Builder(c).setContentTitle(t).setContentText(s).setSmallIcon(R.drawable.ic_launcher).build();
-NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-nm.notify(notification_id, n);
-}
+	public void createNotification() {
+		int notification_id = 1;
+		CharSequence s = getResources().getString(R.string.button_switch_off);
+		Context c = getApplicationContext();
+		Notification n = new Notification.Builder(c).setContentText(s).setSmallIcon(R.drawable.ic_launcher)
+				.setShowWhen(false).setPriority(Notification.PRIORITY_MIN).build();
+		n.flags |= Notification.FLAG_NO_CLEAR;
+		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.notify(notification_id, n);
+	}
 
 	public void switchBacklight(View view) {
 		if (backlightIsCurrentlyOff) {
