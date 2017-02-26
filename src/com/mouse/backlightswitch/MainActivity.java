@@ -14,6 +14,7 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
+	private static final int NOTIFICATION_ID = 1;
 	private String brightnessLevelToBeRestored;
 	private boolean backlightIsCurrentlyOff;
 
@@ -24,15 +25,14 @@ public class MainActivity extends Activity {
 		createNotification();
 	}
 
-	public void createNotification() {
-		int notification_id = 1;
-		CharSequence s = getResources().getString(R.string.button_switch_off);
+	private void createNotification() {
+		CharSequence t = getResources().getString(R.string.button_switch_off);
 		Context c = getApplicationContext();
-		Notification n = new Notification.Builder(c).setContentText(s).setSmallIcon(R.drawable.ic_launcher)
+		Notification n = new Notification.Builder(c).setContentText(t).setSmallIcon(R.drawable.ic_launcher)
 				.setShowWhen(false).setPriority(Notification.PRIORITY_MIN).build();
 		n.flags |= Notification.FLAG_NO_CLEAR;
 		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.notify(notification_id, n);
+		nm.notify(NOTIFICATION_ID, n);
 	}
 
 	public void switchBacklight(View view) {
@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
 
 	private void defineSwitchButton() {
 		String brightnessLevel = getCurrentBrightnessLevel();
-		isBacklightCurrentlyOff(brightnessLevel);
+		identifyBacklightState(brightnessLevel);
 		setSwitchButtonText();
 	}
 
@@ -79,16 +79,15 @@ public class MainActivity extends Activity {
 		return brightnessLevel;
 	}
 
-	private void isBacklightCurrentlyOff(String brightnessLevel) {
+	private void identifyBacklightState(String brightnessLevel) {
 		String zeroBrightness = "0";
 		backlightIsCurrentlyOff = brightnessLevel.equals(zeroBrightness);
 		if (backlightIsCurrentlyOff == false)
-			getBrightnessLevelToBeRestored(brightnessLevel);
+			setBrightnessLevelToBeRestored(brightnessLevel);
 	}
 
-	private String getBrightnessLevelToBeRestored(String brightnessLevel) {
+	private void setBrightnessLevelToBeRestored(String brightnessLevel) {
 		brightnessLevelToBeRestored = brightnessLevel;
-		return brightnessLevelToBeRestored;
 	}
 
 	private void setSwitchButtonText() {
