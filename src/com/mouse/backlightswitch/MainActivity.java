@@ -22,17 +22,6 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		createNotification();
-	}
-
-	private void createNotification() {
-		CharSequence t = getResources().getString(R.string.button_switch_off);
-		Context c = getApplicationContext();
-		Notification n = new Notification.Builder(c).setContentText(t).setSmallIcon(R.drawable.ic_launcher)
-				.setShowWhen(false).setPriority(Notification.PRIORITY_MIN).build();
-		n.flags |= Notification.FLAG_NO_CLEAR;
-		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.notify(NOTIFICATION_ID, n);
 	}
 
 	public void switchBacklight(View view) {
@@ -55,6 +44,7 @@ public class MainActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 		defineSwitchButton();
+		createNotification();
 	}
 
 	private void defineSwitchButton() {
@@ -97,5 +87,20 @@ public class MainActivity extends Activity {
 		} else {
 			switchButton.setText(R.string.button_switch_off);
 		}
+	}
+
+	private void createNotification() {
+		CharSequence t;
+		if (backlightIsCurrentlyOff) {
+			t = getResources().getString(R.string.button_switch_on);
+		} else {
+			t = getResources().getString(R.string.button_switch_off);
+		}
+		Context c = getApplicationContext();
+		Notification n = new Notification.Builder(c).setContentText(t).setSmallIcon(R.drawable.ic_launcher)
+				.setShowWhen(false).setPriority(Notification.PRIORITY_MIN).build();
+		n.flags |= Notification.FLAG_NO_CLEAR;
+		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.notify(NOTIFICATION_ID, n);
 	}
 }
