@@ -7,7 +7,9 @@ import java.io.FileReader;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -97,8 +99,10 @@ public class MainActivity extends Activity {
 			t = getResources().getString(R.string.button_switch_off);
 		}
 		Context c = getApplicationContext();
+		Intent i = new Intent(c, MainActivity.class);
+		PendingIntent pi = PendingIntent.getActivity(c, 0, i, 0);
 		Notification n = new Notification.Builder(c).setContentText(t).setSmallIcon(R.drawable.ic_launcher)
-				.setShowWhen(false).setPriority(Notification.PRIORITY_MIN).build();
+				.setShowWhen(false).setPriority(Notification.PRIORITY_MIN).setContentIntent(pi).build();
 		n.flags |= Notification.FLAG_NO_CLEAR;
 		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		nm.notify(NOTIFICATION_ID, n);
