@@ -13,30 +13,31 @@ public class BacklightSwitchService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-	createNotification();
-return super.onStartCommand(intent, flags, startId);
-}
-
-	private void createNotification() {
-CharSequence t = getResources().getString(R.string.switch_off);
-Context c = getApplicationContext();
-Intent i = new Intent(c, MainActivity.class);
-PendingIntent pi = PendingIntent.getActivity(c, 0, i, 0);
-Notification n = new Notification.Builder(c).setSmallIcon(R.drawable.ic_launcher).setContentText(t).setContentIntent(pi).setShowWhen(false).setPriority(Notification.PRIORITY_MIN).build();
-startForeground(NOTIFICATION_ID, n);
+		createNotification();
+		return super.onStartCommand(intent, flags, startId);
 	}
 
-public void switchBacklightWithText() {
+	private void createNotification() {
+		CharSequence t = getResources().getString(R.string.switch_off);
+		Context c = getApplicationContext();
+		Intent i = new Intent(c, MainActivity.class);
+		PendingIntent pi = PendingIntent.getActivity(c, 0, i, 0);
+		Notification n = new Notification.Builder(c).setSmallIcon(R.drawable.ic_launcher).setContentText(t)
+				.setContentIntent(pi).setShowWhen(false).setPriority(Notification.PRIORITY_MIN).build();
+		startForeground(NOTIFICATION_ID, n);
+	}
+
+	public void switchBacklightWithText() {
 		Toast.makeText(getApplicationContext(), "Подсветка выключена", Toast.LENGTH_SHORT).show();
 	}
 
-@Override
+	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO: Return the communication channel to the service.
 		throw new UnsupportedOperationException("Not yet implemented");
-//return null;
+		// return null;
 	}
 
-void switchBacklight() {
-}
+	void switchBacklight() {
+	}
 }
