@@ -5,10 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +12,6 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
-	private static final int NOTIFICATION_ID = 1;
 	private String brightnessLevelToBeRestored;
 	private boolean backlightIsCurrentlyOff;
 
@@ -31,6 +26,7 @@ public class MainActivity extends Activity {
 			switchBacklightOn();
 			defineSwitchButton();
 		} else {
+			startService(new Intent(this, BacklightSwitchService.class));
 			switchBacklightOff();
 			defineSwitchButton();
 		}
@@ -46,7 +42,6 @@ public class MainActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 		defineSwitchButton();
-		createNotification();
 	}
 
 	private void defineSwitchButton() {
@@ -87,24 +82,7 @@ public class MainActivity extends Activity {
 		if (backlightIsCurrentlyOff) {
 			switchButton.setText("Restore" + brightnessLevelToBeRestored);
 		} else {
-			switchButton.setText(R.string.button_switch_off);
+			switchButton.setText(R.string.switch_off);
 		}
-	}
-
-	private void createNotification() {
-		CharSequence t;
-		if (backlightIsCurrentlyOff) {
-			t = getResources().getString(R.string.button_switch_on);
-		} else {
-			t = getResources().getString(R.string.button_switch_off);
-		}
-		Context c = getApplicationContext();
-		Intent i = new Intent(c, MainActivity.class);
-		PendingIntent pi = PendingIntent.getActivity(c, 0, i, 0);
-		Notification n = new Notification.Builder(c).setContentText(t).setSmallIcon(R.drawable.ic_launcher)
-				.setShowWhen(false).setPriority(Notification.PRIORITY_MIN).setContentIntent(pi).build();
-		n.flags |= Notification.FLAG_NO_CLEAR;
-		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.notify(NOTIFICATION_ID, n);
 	}
 }
