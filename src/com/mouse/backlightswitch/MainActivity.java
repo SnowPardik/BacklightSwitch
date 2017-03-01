@@ -26,13 +26,18 @@ public class MainActivity extends Activity {
 			switchBacklightOn();
 			defineSwitchButton();
 		} else {
-			startService(new Intent(this, BacklightSwitchService.class));
+startService();
 			switchBacklightOff();
 			defineSwitchButton();
 		}
 	}
 
 	public void switchBacklightOn() {
+	}
+
+	public void startService() {
+		String startAction = "start";
+		startService(new Intent(startAction,null, this, BacklightSwitchService.class));
 	}
 
 	public void switchBacklightOff() {
