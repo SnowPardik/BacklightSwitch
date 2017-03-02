@@ -12,7 +12,7 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
-	private static final String START_ACTION = "com.mouse.backlightswitch.start";
+	public static final String START_ACTION = "com.mouse.backlightswitch.start";
 	private String brightnessLevelToBeRestored;
 	private boolean backlightIsCurrentlyOff;
 
@@ -27,20 +27,20 @@ public class MainActivity extends Activity {
 			switchBacklightOn();
 			defineSwitchButton();
 		} else {
-startService();
+			startService();
 			switchBacklightOff();
 			defineSwitchButton();
 		}
 	}
 
-	public void switchBacklightOn() {
+	private void switchBacklightOn() {
 	}
 
 	private void startService() {
 		startService(new Intent(START_ACTION, null, this, BacklightSwitchService.class));
 	}
 
-	public void switchBacklightOff() {
+	private void switchBacklightOff() {
 	}
 
 	@Override
