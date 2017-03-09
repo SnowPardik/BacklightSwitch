@@ -12,8 +12,10 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.IBinder;
+import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class BacklightSwitchService extends Service {
@@ -24,7 +26,7 @@ public class BacklightSwitchService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		dimmer_view = new DimmerView(getApplicationContext());
+dimmer_view = new DimmerView(getApplicationContext());
 		createNotification();
 		onNotificationClick(intent.getAction());
 		return super.onStartCommand(intent, flags, startId);
@@ -119,11 +121,13 @@ public class BacklightSwitchService extends Service {
 		WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
 		LayoutParams dimmer_params = new LayoutParams();
 		dimmer_params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+		dimmer_params.flags |= LayoutParams.FLAG_DIM_BEHIND; 
+		dimmer_params.dimAmount = 1.0f;
 		dimmer_params.flags |= LayoutParams.FLAG_NOT_FOCUSABLE;
 		dimmer_params.flags |= LayoutParams.FLAG_NOT_TOUCHABLE;
-		dimmer_params.flags |= LayoutParams.FLAG_FULLSCREEN;
+dimmer_params.flags |= LayoutParams.FLAG_FULLSCREEN;
 		dimmer_params.flags &= ~LayoutParams.FLAG_KEEP_SCREEN_ON;
-		dimmer_params.flags &= ~LayoutParams.FLAG_TURN_SCREEN_ON;
+			dimmer_params.flags &= ~LayoutParams.FLAG_TURN_SCREEN_ON;
 		dimmer_params.format = PixelFormat.OPAQUE;
 
 		Point p = new Point();
@@ -133,7 +137,7 @@ public class BacklightSwitchService extends Service {
 
 		// dimmer_view = new DimmerView(getApplicationContext());
 		wm.addView(dimmer_view, dimmer_params);
-	}
+}
 
 	private void removeDimmerOutOfTheScreen() {
 		WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
@@ -152,6 +156,7 @@ public class BacklightSwitchService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO: Return the communication channel to the service.
-		throw new UnsupportedOperationException("Not yet implemented");
+		//throw new UnsupportedOperationException("Not yet implemented");
+return null;
 	}
 }

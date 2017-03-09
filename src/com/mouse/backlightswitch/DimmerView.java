@@ -8,7 +8,7 @@ public class DimmerView extends LinearLayout {
 
 	public DimmerView(Context context) {
 		super(context);
-		LayoutInflater li = LayoutInflater.from(getContext());
+LayoutInflater li = LayoutInflater.from(getContext());
 		li.inflate(R.layout.dimmer_view, this, true);
 }
 
