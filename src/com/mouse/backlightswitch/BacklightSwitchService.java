@@ -9,16 +9,22 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.os.IBinder;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class BacklightSwitchService extends Service {
 	private static final int NOTIFICATION_ID = 1;
 	private static final String NOTIFICATION_ACTION = "com.mouse.backlightswitch.notification";
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
+	private DimmerView dimmer_view;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		dimmer_view = new DimmerView(getApplicationContext());
 		createNotification();
 		onNotificationClick(intent.getAction());
 		return super.onStartCommand(intent, flags, startId);
@@ -38,6 +44,7 @@ public class BacklightSwitchService extends Service {
 		if (intentAction.equals(NOTIFICATION_ACTION)) {
 			Toast.makeText(getApplicationContext(), "Получаю интент" + intentAction, Toast.LENGTH_SHORT).show();
 			defineSwitchOperation();
+			// switchBacklight();
 		}
 	}
 
@@ -45,7 +52,8 @@ public class BacklightSwitchService extends Service {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		boolean backlightIsCurrentlyOff = isBacklightCurrentlyOff(brightnessLevel);
 		String brightnessLevelToBeRestored = getBrightnessLevelToBeRestored(backlightIsCurrentlyOff, brightnessLevel);
-		switchBacklight(backlightIsCurrentlyOff, brightnessLevelToBeRestored);
+		String notificationText = getNotificationText(backlightIsCurrentlyOff);
+		switchBacklight(backlightIsCurrentlyOff, brightnessLevelToBeRestored, notificationText);
 	}
 
 	private String getCurrentBrightnessLevel() {
@@ -78,14 +86,25 @@ public class BacklightSwitchService extends Service {
 		return brightnessLevelToBeRestored;
 	}
 
-	private void switchBacklight(boolean backlightIsCurrentlyOff, String brightnessLevelToBeRestored) {
+	private String getNotificationText(boolean backlightIsCurrentlyOff) {
+		String notificationText = "";
+		if (backlightIsCurrentlyOff) {
+			notificationText = getResources().getString(R.string.switch_off);
+		} else {
+			notificationText = getResources().getString(R.string.switch_on);
+		}
+		return notificationText;
+	}
+
+	private void switchBacklight(boolean backlightIsCurrentlyOff, String brightnessLevelToBeRestored,
+			String notificationText) {
 		if (backlightIsCurrentlyOff) {
 			switchBacklightOn(brightnessLevelToBeRestored);
-			String notificationText = getResources().getString(R.string.switch_off);
+			// removeDimmerOutOfTheScreen();
 			updateNotification(notificationText);
 		} else {
 			switchBacklightOff();
-			String notificationText = getResources().getString(R.string.switch_on);
+			putDimmerOverTheScreen();
 			updateNotification(notificationText);
 		}
 	}
@@ -94,6 +113,31 @@ public class BacklightSwitchService extends Service {
 	}
 
 	private void switchBacklightOff() {
+	}
+
+	private void putDimmerOverTheScreen() {
+		WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+		LayoutParams dimmer_params = new LayoutParams();
+		dimmer_params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+		dimmer_params.flags |= LayoutParams.FLAG_NOT_FOCUSABLE;
+		dimmer_params.flags |= LayoutParams.FLAG_NOT_TOUCHABLE;
+		dimmer_params.flags |= LayoutParams.FLAG_FULLSCREEN;
+		dimmer_params.flags &= ~LayoutParams.FLAG_KEEP_SCREEN_ON;
+		dimmer_params.flags &= ~LayoutParams.FLAG_TURN_SCREEN_ON;
+		dimmer_params.format = PixelFormat.OPAQUE;
+
+		Point p = new Point();
+		wm.getDefaultDisplay().getRealSize(p);
+		dimmer_params.width = p.x;
+		dimmer_params.height = p.y;
+
+		// dimmer_view = new DimmerView(getApplicationContext());
+		wm.addView(dimmer_view, dimmer_params);
+	}
+
+	private void removeDimmerOutOfTheScreen() {
+		WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+		wm.removeViewImmediate(dimmer_view);
 	}
 
 	private void updateNotification(String notificationText) {
