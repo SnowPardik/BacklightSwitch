@@ -12,21 +12,17 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.IBinder;
-import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class BacklightSwitchService extends Service {
 	private static final int NOTIFICATION_ID = 1;
 	private static final String NOTIFICATION_ACTION = "com.mouse.backlightswitch.notification";
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
-	private DimmerView dimmer_view;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-dimmer_view = new DimmerView(getApplicationContext());
 		createNotification();
 		onNotificationClick(intent.getAction());
 		return super.onStartCommand(intent, flags, startId);
@@ -54,8 +50,10 @@ dimmer_view = new DimmerView(getApplicationContext());
 		String brightnessLevel = getCurrentBrightnessLevel();
 		boolean backlightIsCurrentlyOff = isBacklightCurrentlyOff(brightnessLevel);
 		String brightnessLevelToBeRestored = getBrightnessLevelToBeRestored(backlightIsCurrentlyOff, brightnessLevel);
+		DimmerView dimmer_view = getDimmerView();
+		LayoutParams dimmer_params = defineDimmerParams();
 		String notificationText = getNotificationText(backlightIsCurrentlyOff);
-		switchBacklight(backlightIsCurrentlyOff, brightnessLevelToBeRestored, notificationText);
+		switchBacklight(backlightIsCurrentlyOff, brightnessLevelToBeRestored, dimmer_view, dimmer_params, notificationText);
 	}
 
 	private String getCurrentBrightnessLevel() {
@@ -88,6 +86,32 @@ dimmer_view = new DimmerView(getApplicationContext());
 		return brightnessLevelToBeRestored;
 	}
 
+private DimmerView getDimmerView() {
+	DimmerView dimmer_view = new DimmerView(this);
+	return dimmer_view;
+}
+
+private LayoutParams defineDimmerParams() {
+	WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+	LayoutParams dimmer_params = new LayoutParams();
+	dimmer_params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+	dimmer_params.flags |= LayoutParams.FLAG_DIM_BEHIND; 
+	dimmer_params.dimAmount = 1.0f;
+	dimmer_params.flags |= LayoutParams.FLAG_NOT_FOCUSABLE;
+	dimmer_params.flags |= LayoutParams.FLAG_NOT_TOUCHABLE;
+dimmer_params.flags |= LayoutParams.FLAG_FULLSCREEN;
+	dimmer_params.flags &= ~LayoutParams.FLAG_KEEP_SCREEN_ON;
+		dimmer_params.flags &= ~LayoutParams.FLAG_TURN_SCREEN_ON;
+	dimmer_params.format = PixelFormat.OPAQUE;
+
+	Point p = new Point();
+	wm.getDefaultDisplay().getRealSize(p);
+	dimmer_params.width = p.x;
+	dimmer_params.height = p.y;
+
+return dimmer_params;
+}
+
 	private String getNotificationText(boolean backlightIsCurrentlyOff) {
 		String notificationText = "";
 		if (backlightIsCurrentlyOff) {
@@ -98,15 +122,14 @@ dimmer_view = new DimmerView(getApplicationContext());
 		return notificationText;
 	}
 
-	private void switchBacklight(boolean backlightIsCurrentlyOff, String brightnessLevelToBeRestored,
-			String notificationText) {
+	private void switchBacklight(boolean backlightIsCurrentlyOff, String brightnessLevelToBeRestored, DimmerView dimmer_view, LayoutParams dimmer_params, String notificationText) {
 		if (backlightIsCurrentlyOff) {
 			switchBacklightOn(brightnessLevelToBeRestored);
-			// removeDimmerOutOfTheScreen();
+//removeDimmerOutOfTheScreen(dimmer_view);
 			updateNotification(notificationText);
 		} else {
 			switchBacklightOff();
-			putDimmerOverTheScreen();
+			putDimmerOverTheScreen(dimmer_view, dimmer_params);
 			updateNotification(notificationText);
 		}
 	}
@@ -117,29 +140,12 @@ dimmer_view = new DimmerView(getApplicationContext());
 	private void switchBacklightOff() {
 	}
 
-	private void putDimmerOverTheScreen() {
-		WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-		LayoutParams dimmer_params = new LayoutParams();
-		dimmer_params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
-		dimmer_params.flags |= LayoutParams.FLAG_DIM_BEHIND; 
-		dimmer_params.dimAmount = 1.0f;
-		dimmer_params.flags |= LayoutParams.FLAG_NOT_FOCUSABLE;
-		dimmer_params.flags |= LayoutParams.FLAG_NOT_TOUCHABLE;
-dimmer_params.flags |= LayoutParams.FLAG_FULLSCREEN;
-		dimmer_params.flags &= ~LayoutParams.FLAG_KEEP_SCREEN_ON;
-			dimmer_params.flags &= ~LayoutParams.FLAG_TURN_SCREEN_ON;
-		dimmer_params.format = PixelFormat.OPAQUE;
-
-		Point p = new Point();
-		wm.getDefaultDisplay().getRealSize(p);
-		dimmer_params.width = p.x;
-		dimmer_params.height = p.y;
-
-		// dimmer_view = new DimmerView(getApplicationContext());
+	private void putDimmerOverTheScreen(DimmerView dimmer_view, LayoutParams dimmer_params) {
+		WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
 		wm.addView(dimmer_view, dimmer_params);
 }
 
-	private void removeDimmerOutOfTheScreen() {
+	private void removeDimmerOutOfTheScreen(DimmerView dimmer_view) {
 		WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
 		wm.removeViewImmediate(dimmer_view);
 	}
