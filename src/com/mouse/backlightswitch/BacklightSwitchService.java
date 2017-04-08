@@ -20,7 +20,6 @@ public class BacklightSwitchService extends Service {
 	private static final int NOTIFICATION_ID = 1;
 	private static final String NOTIFICATION_ACTION = "com.mouse.backlightswitch.notification";
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
-	private static final float dim_amount = 1.0f;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -97,7 +96,7 @@ private LayoutParams defineDimmerParams() {
 	LayoutParams dimmer_params = new LayoutParams();
 	dimmer_params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
 	dimmer_params.flags |= LayoutParams.FLAG_DIM_BEHIND; 
-	dimmer_params.dimAmount = dim_amount;
+	dimmer_params.dimAmount = 1.0f;
 	dimmer_params.flags |= LayoutParams.FLAG_NOT_FOCUSABLE;
 	dimmer_params.flags |= LayoutParams.FLAG_NOT_TOUCHABLE;
 dimmer_params.flags |= LayoutParams.FLAG_FULLSCREEN;
