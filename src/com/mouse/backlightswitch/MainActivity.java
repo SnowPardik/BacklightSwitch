@@ -24,6 +24,7 @@ public class MainActivity extends Activity {
 
 	public void switchBacklight(View view) {
 		if (backlightIsCurrentlyOff) {
+			startService();
 			switchBacklightOn();
 			defineSwitchButton();
 		} else {
