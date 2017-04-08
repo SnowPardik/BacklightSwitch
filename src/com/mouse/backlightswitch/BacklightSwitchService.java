@@ -7,8 +7,10 @@ import java.io.FileReader;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.IBinder;
@@ -22,9 +24,25 @@ public class BacklightSwitchService extends Service {
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
 
 	@Override
+	public void onCreate() {
+		super.onCreate();
+registerReceiver(new BroadcastReceiver() {
+
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		Toast.makeText(getApplicationContext(), "Я проснулся", Toast.LENGTH_SHORT).show(); 
+	}
+},
+new IntentFilter(Intent.ACTION_SCREEN_ON));
+}
+
+	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		createNotification();
-		onNotificationClick(intent.getAction());
+		String intentAction = intent.getAction(); 
+		if (NOTIFICATION_ACTION.equals(intentAction)) {
+handleNotificationClick();
+		}
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -38,22 +56,20 @@ public class BacklightSwitchService extends Service {
 		startForeground(NOTIFICATION_ID, n);
 	}
 
-	private void onNotificationClick(String intentAction) {
-		if (intentAction.equals(NOTIFICATION_ACTION)) {
-			Toast.makeText(getApplicationContext(), "Получаю интент" + intentAction, Toast.LENGTH_SHORT).show();
+	private void handleNotificationClick() {
+			Toast.makeText(getApplicationContext(), "Получаю интент", Toast.LENGTH_SHORT).show();
 			defineSwitchOperation();
 			// switchBacklight();
 		}
-	}
 
 	private void defineSwitchOperation() {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		boolean backlightIsCurrentlyOff = isBacklightCurrentlyOff(brightnessLevel);
 		String brightnessLevelToBeRestored = getBrightnessLevelToBeRestored(backlightIsCurrentlyOff, brightnessLevel);
-		DimmerView dimmer_view = getDimmerView();
-		LayoutParams dimmer_params = defineDimmerParams();
+//DimmerView dimmer_view = getDimmerView();
+//LayoutParams dimmer_params = defineDimmerParams();
 		String notificationText = getNotificationText(backlightIsCurrentlyOff);
-		switchBacklight(backlightIsCurrentlyOff, brightnessLevelToBeRestored, dimmer_view, dimmer_params, notificationText);
+//switchBacklight(backlightIsCurrentlyOff, brightnessLevelToBeRestored, dimmer_view, dimmer_params, notificationText);
 	}
 
 	private String getCurrentBrightnessLevel() {
