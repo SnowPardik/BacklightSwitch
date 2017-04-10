@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 public class BacklightSwitchService extends Service {
 	private static final int NOTIFICATION_ID = 1;
-	private static final String BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_START_WITH_ZERO_BRIGHTNESS = "287";
+	private static final String BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_STARTS_WITH_ZERO_BRIGHTNESS = "287";
 	private static final String NOTIFICATION_ACTION = "com.mouse.backlightswitch.notification";
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
 	private static final String ZERO_BRIGHTNESS = "0";
@@ -32,7 +32,7 @@ public class BacklightSwitchService extends Service {
 		super.onCreate();
 
 		String brightnessLevel = getCurrentBrightnessLevel();
-		setStartBrightnessLevelToBeRestored(brightnessLevel);
+		setBrightnessLevelToBeRestoredIfStartsWithZeroBrightness(brightnessLevel);
 		createNotification(brightnessLevel);
 
 		registerReceiver(new BroadcastReceiver() {
@@ -97,11 +97,9 @@ public class BacklightSwitchService extends Service {
 		return brightnessLevel;
 	}
 
-	private void setStartBrightnessLevelToBeRestored(String brightnessLevel) {
+	private void setBrightnessLevelToBeRestoredIfStartsWithZeroBrightness(String brightnessLevel) {
 		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
-			brightnessLevelToBeRestored = BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_START_WITH_ZERO_BRIGHTNESS;
-		} else {
-			brightnessLevelToBeRestored = brightnessLevel;
+			brightnessLevelToBeRestored = BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_STARTS_WITH_ZERO_BRIGHTNESS;
 		}
 	}
 
