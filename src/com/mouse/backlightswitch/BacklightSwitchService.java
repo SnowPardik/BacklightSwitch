@@ -33,6 +33,8 @@ public class BacklightSwitchService extends Service {
 	public void onCreate() {
 		super.onCreate();
 
+		dimmer_view = new DimmerView(this);
+
 		String brightnessLevel = getCurrentBrightnessLevel();
 		setBrightnessLevelToBeRestoredIfStartsWithZeroBrightness(brightnessLevel);
 		createNotification(brightnessLevel);
@@ -42,6 +44,7 @@ public class BacklightSwitchService extends Service {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				Toast.makeText(getApplicationContext(), "Я проснулся", Toast.LENGTH_SHORT).show();
+				updateNotification();
 			}
 		}, new IntentFilter(Intent.ACTION_SCREEN_ON));
 	}
@@ -124,8 +127,6 @@ public class BacklightSwitchService extends Service {
 	}
 
 	private void putDimmerOverTheScreen() {
-		dimmer_view = new DimmerView(this);
-
 		WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
 		LayoutParams dimmer_params = new LayoutParams();
 		dimmer_params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
