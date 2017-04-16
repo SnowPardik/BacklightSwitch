@@ -19,6 +19,7 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class BacklightSwitchService extends Service {
+	private static final float DIM_AMOUNT = 1.0f;
 	private static final int NOTIFICATION_ID = 1;
 	private static final String BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_STARTS_WITH_ZERO_BRIGHTNESS = "287";
 	private static final String NOTIFICATION_ACTION = "com.mouse.backlightswitch.notification";
@@ -26,6 +27,7 @@ public class BacklightSwitchService extends Service {
 	private static final String ZERO_BRIGHTNESS = "0";
 
 	private String brightnessLevelToBeRestored;
+	private DimmerView dimmer_view;
 
 	@Override
 	public void onCreate() {
@@ -72,10 +74,10 @@ public class BacklightSwitchService extends Service {
 			switchBacklightOn();
 			updateNotification();
 		} else {
+			brightnessLevelToBeRestored = brightnessLevel;
 			Toast.makeText(getApplicationContext(),
 					"Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT)
 					.show();
-			brightnessLevelToBeRestored = brightnessLevel;
 			switchBacklightOff();
 			updateNotification();
 		}
@@ -103,17 +105,32 @@ public class BacklightSwitchService extends Service {
 		}
 	}
 
-	private DimmerView getDimmerView() {
-		DimmerView dimmer_view = new DimmerView(this);
-		return dimmer_view;
+	private String getNotificationText(String brightnessLevel) {
+		String notificationText = "";
+		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
+			notificationText = getResources().getString(R.string.switch_on);
+		} else {
+			notificationText = getResources().getString(R.string.switch_off);
+		}
+		return notificationText;
 	}
 
-	private LayoutParams defineDimmerParams() {
+	private void switchBacklightOn() {
+		removeDimmerFromTheScreen();
+	}
+
+	private void switchBacklightOff() {
+		putDimmerOverTheScreen();
+	}
+
+	private void putDimmerOverTheScreen() {
+		dimmer_view = new DimmerView(this);
+
 		WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
 		LayoutParams dimmer_params = new LayoutParams();
 		dimmer_params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
 		dimmer_params.flags |= LayoutParams.FLAG_DIM_BEHIND;
-		dimmer_params.dimAmount = 1.0f;
+		dimmer_params.dimAmount = DIM_AMOUNT;
 		dimmer_params.flags |= LayoutParams.FLAG_NOT_FOCUSABLE;
 		dimmer_params.flags |= LayoutParams.FLAG_NOT_TOUCHABLE;
 		dimmer_params.flags |= LayoutParams.FLAG_FULLSCREEN;
@@ -126,31 +143,10 @@ public class BacklightSwitchService extends Service {
 		dimmer_params.width = p.x;
 		dimmer_params.height = p.y;
 
-		return dimmer_params;
-	}
-
-	private String getNotificationText(String brightnessLevel) {
-		String notificationText = "";
-		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
-			notificationText = getResources().getString(R.string.switch_on);
-		} else {
-			notificationText = getResources().getString(R.string.switch_off);
-		}
-		return notificationText;
-	}
-
-	private void switchBacklightOn() {
-	}
-
-	private void switchBacklightOff() {
-	}
-
-	private void putDimmerOverTheScreen(DimmerView dimmer_view, LayoutParams dimmer_params) {
-		WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
 		wm.addView(dimmer_view, dimmer_params);
 	}
 
-	private void removeDimmerOutOfTheScreen(DimmerView dimmer_view) {
+	private void removeDimmerFromTheScreen() {
 		WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
 		wm.removeViewImmediate(dimmer_view);
 	}
