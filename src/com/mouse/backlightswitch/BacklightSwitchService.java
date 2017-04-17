@@ -45,6 +45,7 @@ public class BacklightSwitchService extends Service {
 			public void onReceive(Context context, Intent intent) {
 				Toast.makeText(getApplicationContext(), "Я проснулся", Toast.LENGTH_SHORT).show();
 				updateNotification();
+				switchBacklightOff();
 			}
 		}, new IntentFilter(Intent.ACTION_SCREEN_ON));
 	}
@@ -75,6 +76,7 @@ public class BacklightSwitchService extends Service {
 			Toast.makeText(getApplicationContext(), "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT)
 					.show();
 			switchBacklightOn();
+			removeDimmerFromTheScreen();
 			updateNotification();
 		} else {
 			brightnessLevelToBeRestored = brightnessLevel;
@@ -82,6 +84,7 @@ public class BacklightSwitchService extends Service {
 					"Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT)
 					.show();
 			switchBacklightOff();
+			putDimmerOverTheScreen();
 			updateNotification();
 		}
 	}
@@ -119,11 +122,9 @@ public class BacklightSwitchService extends Service {
 	}
 
 	private void switchBacklightOn() {
-		removeDimmerFromTheScreen();
 	}
 
 	private void switchBacklightOff() {
-		putDimmerOverTheScreen();
 	}
 
 	private void putDimmerOverTheScreen() {
