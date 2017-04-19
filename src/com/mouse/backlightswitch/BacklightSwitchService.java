@@ -61,10 +61,9 @@ public class BacklightSwitchService extends Service {
 
 	private void createNotification(String brightnessLevel) {
 		String notificationText = getNotificationText(brightnessLevel);
-		Context c = getApplicationContext();
-		Intent i = new Intent(NOTIFICATION_ACTION, null, c, BacklightSwitchService.class);
-		PendingIntent pi = PendingIntent.getService(c, 0, i, 0);
-		Notification n = new Notification.Builder(c).setSmallIcon(R.drawable.ic_launcher)
+		Intent i = new Intent(NOTIFICATION_ACTION, null, this, BacklightSwitchService.class);
+		PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
+		Notification n = new Notification.Builder(this).setSmallIcon(R.drawable.ic_launcher)
 				.setContentText(notificationText).setContentIntent(pi).setShowWhen(false)
 				.setPriority(Notification.PRIORITY_MIN).build();
 		startForeground(NOTIFICATION_ID, n);
@@ -73,14 +72,14 @@ public class BacklightSwitchService extends Service {
 	private void handleNotificationClick() {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
-			Toast.makeText(getApplicationContext(), "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT)
+			Toast.makeText(this, "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT)
 					.show();
 			switchBacklightOn();
 			removeDimmerFromTheScreen();
 			updateNotification();
 		} else {
 			brightnessLevelToBeRestored = brightnessLevel;
-			Toast.makeText(getApplicationContext(),
+			Toast.makeText(this,
 					"Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT)
 					.show();
 			switchBacklightOff();
