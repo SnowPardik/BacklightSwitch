@@ -26,8 +26,8 @@ public class BacklightSwitchService extends Service {
 	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
 	private static final String ZERO_BRIGHTNESS = "0";
 
-	private String brightnessLevelToBeRestored;
 	private DimmerView dimmer_view;
+	private String brightnessLevelToBeRestored;
 
 	@Override
 	public void onCreate() {
@@ -43,11 +43,18 @@ public class BacklightSwitchService extends Service {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				Toast.makeText(getApplicationContext(), "Я проснулся", Toast.LENGTH_SHORT).show();
+				ifScreenDimmed();
 				updateNotification();
-				switchBacklightOff();
 			}
 		}, new IntentFilter(Intent.ACTION_SCREEN_ON));
+	}
+
+	private void ifScreenDimmed() {
+		boolean isDimmed = dimmer_view.isAttachedToWindow();
+		if (isDimmed) {
+			Toast.makeText(this, "Затемнён, выключаю подсветку", Toast.LENGTH_SHORT).show();
+			switchBacklightOff();
+		}
 	}
 
 	@Override
@@ -72,16 +79,14 @@ public class BacklightSwitchService extends Service {
 	private void handleNotificationClick() {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
-			Toast.makeText(this, "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT).show();
 			switchBacklightOn();
 			removeDimmerFromTheScreen();
 			updateNotification();
 		} else {
 			brightnessLevelToBeRestored = brightnessLevel;
-			Toast.makeText(this,
-					"Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored,
+					Toast.LENGTH_SHORT).show();
 			switchBacklightOff();
 			putDimmerOverTheScreen();
 			updateNotification();
