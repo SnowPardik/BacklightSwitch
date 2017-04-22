@@ -1,8 +1,10 @@
 package com.mouse.backlightswitch;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -19,6 +21,7 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class BacklightSwitchService extends Service {
+	private final static File CHECK_FILE = new File("/storage/sdcard0/checkbrightness");
 	private static final float DIM_AMOUNT = 1.0f;
 	private static final int NOTIFICATION_ID = 1;
 	private static final String BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_STARTS_WITH_ZERO_BRIGHTNESS = "287";
@@ -43,15 +46,14 @@ public class BacklightSwitchService extends Service {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				ifScreenDimmed();
+				ifScreenIsDimmed();
 				updateNotification();
 			}
 		}, new IntentFilter(Intent.ACTION_SCREEN_ON));
 	}
 
-	private void ifScreenDimmed() {
-		boolean isDimmed = dimmer_view.isAttachedToWindow();
-		if (isDimmed) {
+	private void ifScreenIsDimmed() {
+		if (dimmer_view.isAttachedToWindow()) {
 			Toast.makeText(this, "Затемнён, выключаю подсветку", Toast.LENGTH_SHORT).show();
 			switchBacklightOff();
 		}
@@ -80,7 +82,7 @@ public class BacklightSwitchService extends Service {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
 			Toast.makeText(this, "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT).show();
-			switchBacklightOn();
+			switchBacklightOn(brightnessLevelToBeRestored);
 			removeDimmerFromTheScreen();
 			updateNotification();
 		} else {
@@ -125,10 +127,26 @@ public class BacklightSwitchService extends Service {
 		return notificationText;
 	}
 
-	private void switchBacklightOn() {
+	private void switchBacklightOn(String brightnessLevelToBeRestored) {
+		try {
+			FileWriter fw = new FileWriter(CHECK_FILE);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(brightnessLevelToBeRestored);
+			bw.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 	private void switchBacklightOff() {
+		try {
+			FileWriter fw = new FileWriter(CHECK_FILE, false);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(brightnessLevelToBeRestored);
+			bw.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 	private void putDimmerOverTheScreen() {
