@@ -21,12 +21,12 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class BacklightSwitchService extends Service {
-	private final static File CHECK_FILE = new File("/storage/sdcard0/checkbrightness");
+	private static final File CHECK_FILE = new File("/storage/sdcard0/checkbrightness");
+	private static final File FILE = new File("/sys/class/leds/wled:backlight/brightness");
 	private static final float DIM_AMOUNT = 1.0f;
 	private static final int NOTIFICATION_ID = 1;
 	private static final String BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_STARTS_WITH_ZERO_BRIGHTNESS = "287";
 	private static final String NOTIFICATION_ACTION = "com.mouse.backlightswitch.notification";
-	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
 	private static final String ZERO_BRIGHTNESS = "0";
 
 	private DimmerView dimmer_view;
@@ -82,7 +82,7 @@ public class BacklightSwitchService extends Service {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
 			Toast.makeText(this, "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT).show();
-			switchBacklightOn(brightnessLevelToBeRestored);
+			switchBacklightOn();
 			removeDimmerFromTheScreen();
 			updateNotification();
 		} else {
@@ -96,12 +96,11 @@ public class BacklightSwitchService extends Service {
 	}
 
 	private String getCurrentBrightnessLevel() {
-		File f = new File(PATH);
 		String brightnessLevel = "";
 		StringBuilder sb = new StringBuilder();
 		try {
-			FileReader fr = new FileReader(f);
-			BufferedReader br = new BufferedReader(fr);
+			FileReader fr = new FileReader(FILE);
+			BufferedReader br = new BufferedReader(fr, 8);
 			sb.append(br.readLine());
 			br.close();
 			brightnessLevel = sb.toString();
@@ -127,11 +126,14 @@ public class BacklightSwitchService extends Service {
 		return notificationText;
 	}
 
-	private void switchBacklightOn(String brightnessLevelToBeRestored) {
+	private void switchBacklightOn() {
+		StringBuilder sbuilder = new StringBuilder();
 		try {
 			FileWriter fw = new FileWriter(CHECK_FILE);
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(brightnessLevelToBeRestored);
+			BufferedWriter bw = new BufferedWriter(fw, 8);
+			sbuilder.append(brightnessLevelToBeRestored + "\n");
+			String stringToWrite = sbuilder.toString();
+			bw.write(stringToWrite);
 			bw.close();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -139,10 +141,13 @@ public class BacklightSwitchService extends Service {
 	}
 
 	private void switchBacklightOff() {
+		StringBuilder sbuilder = new StringBuilder();
 		try {
 			FileWriter fw = new FileWriter(CHECK_FILE, false);
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(brightnessLevelToBeRestored);
+			BufferedWriter bw = new BufferedWriter(fw, 4);
+			sbuilder.append(ZERO_BRIGHTNESS + "\n");
+			String stringToWrite = sbuilder.toString();
+			bw.write(stringToWrite);
 			bw.close();
 		} catch (Exception e) {
 			// TODO: handle exception
