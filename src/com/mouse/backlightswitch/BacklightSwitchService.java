@@ -25,7 +25,7 @@ public class BacklightSwitchService extends Service {
 	private static final File FILE = new File("/sys/class/leds/wled:backlight/brightness");
 	private static final float DIM_AMOUNT = 1.0f;
 	private static final int NOTIFICATION_ID = 1;
-	private static final String BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_STARTS_WITH_ZERO_BRIGHTNESS = "287";
+	private static final String BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_STARTS_WITH_ZERO_BRIGHTNESS = "289";
 	private static final String NOTIFICATION_ACTION = "com.mouse.backlightswitch.notification";
 	private static final String ZERO_BRIGHTNESS = "0";
 
@@ -54,7 +54,7 @@ public class BacklightSwitchService extends Service {
 
 	private void ifScreenIsDimmed() {
 		if (dimmer_view.isAttachedToWindow()) {
-			Toast.makeText(this, "Затемнён, выключаю подсветку", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, getResources().getString(R.string.is_off), Toast.LENGTH_SHORT).show();
 			switchBacklightOff();
 		}
 	}
@@ -119,9 +119,9 @@ public class BacklightSwitchService extends Service {
 	private String getNotificationText(String brightnessLevel) {
 		String notificationText = "";
 		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
-			notificationText = getResources().getString(R.string.switch_on);
+			notificationText = getResources().getString(R.string.is_off);
 		} else {
-			notificationText = getResources().getString(R.string.switch_off);
+			notificationText = getResources().getString(R.string.is_on);
 		}
 		return notificationText;
 	}

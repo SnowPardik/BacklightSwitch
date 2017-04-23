@@ -2,6 +2,6 @@
 <resources>
 
     <string name="app_name">BacklightSwitch</string>
-    <string name="switch_off">Switch backlight off</string>
-    <string name="switch_on">Switch backlight on</string>
+    <string name="is_off">Backlight is off</string>
+    <string name="is_on">Backlight is on</string>
     </resources>
