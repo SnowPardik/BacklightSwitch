@@ -22,8 +22,8 @@ import android.widget.Toast;
 public class BacklightSwitchService extends Service {
 	private static final float DIM_AMOUNT = 1.0f;
 	private static final int NOTIFICATION_ID = 1;
-	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
 	private static final String BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_STARTS_WITH_ZERO_BRIGHTNESS = "289";
+		private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
 	private static final String NOTIFICATION_ACTION = "com.mouse.backlightswitch.notification";
 	private static final String ZERO_BRIGHTNESS = "0";
 
@@ -79,16 +79,15 @@ public class BacklightSwitchService extends Service {
 	private void handleNotificationClick() {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
-			Toast.makeText(this, "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT).show();
 			switchBacklightOn();
 			removeDimmerFromTheScreen();
+			Toast.makeText(this, "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT).show();
 			updateNotification();
 		} else {
 			brightnessLevelToBeRestored = brightnessLevel;
-			Toast.makeText(this, "Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored,
-					Toast.LENGTH_SHORT).show();
 			switchBacklightOff();
 			putDimmerOverTheScreen();
+			Toast.makeText(this, "Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT).show();
 			updateNotification();
 		}
 	}
