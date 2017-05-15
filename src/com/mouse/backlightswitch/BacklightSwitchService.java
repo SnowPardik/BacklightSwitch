@@ -46,17 +46,12 @@ public class BacklightSwitchService extends Service {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				ifScreenIsDimmed();
+				if (dimmer_view.isAttachedToWindow()) {
+					switchBacklightOff();
+				}
 				updateNotification();
 			}
 		}, new IntentFilter(Intent.ACTION_SCREEN_ON));
-	}
-
-	private void ifScreenIsDimmed() {
-		if (dimmer_view.isAttachedToWindow()) {
-			switchBacklightOff();
-			Toast.makeText(this, getResources().getString(R.string.is_off), Toast.LENGTH_SHORT).show();
-		}
 	}
 
 	@Override
@@ -78,6 +73,8 @@ public class BacklightSwitchService extends Service {
 		Notification n = nb.build();
 		nm.notify(NOTIFICATION_ID, n);
 		startForeground(NOTIFICATION_ID, n);
+
+		Toast.makeText(this, notificationText, Toast.LENGTH_SHORT).show();
 	}
 
 	private void handleNotificationClick() {
@@ -85,14 +82,16 @@ public class BacklightSwitchService extends Service {
 		if (brightnessLevel.equals(ZERO_BRIGHTNESS)) {
 			switchBacklightOn();
 			removeDimmerFromTheScreen();
-			Toast.makeText(this, "Восстанавливаю" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT).show();
+			// Toast.makeText(this, "Восстанавливаю" +
+			// brightnessLevelToBeRestored, Toast.LENGTH_SHORT).show();
 			updateNotification();
 		} else {
 			brightnessLevelToBeRestored = brightnessLevel;
 			switchBacklightOff();
 			putDimmerOverTheScreen();
-			Toast.makeText(this, "Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored,
-					Toast.LENGTH_SHORT).show();
+			// Toast.makeText(this, "Выключаю подсветку, буду восстанавливать" +
+			// brightnessLevelToBeRestored,
+			// Toast.LENGTH_SHORT).show();
 			updateNotification();
 		}
 	}
@@ -197,6 +196,8 @@ public class BacklightSwitchService extends Service {
 		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		nb.setContentText(notificationText);
 		nm.notify(NOTIFICATION_ID, nb.build());
+
+		Toast.makeText(this, notificationText, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
