@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -23,11 +24,12 @@ public class BacklightSwitchService extends Service {
 	private static final float DIM_AMOUNT = 1.0f;
 	private static final int NOTIFICATION_ID = 1;
 	private static final String BRIGHTNESS_LEVEL_TO_BE_RESTORED_IF_STARTS_WITH_ZERO_BRIGHTNESS = "289";
-		private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
+	private static final String PATH = "/sys/class/leds/wled:backlight/brightness";
 	private static final String NOTIFICATION_ACTION = "com.mouse.backlightswitch.notification";
 	private static final String ZERO_BRIGHTNESS = "0";
 
 	private DimmerView dimmer_view;
+	private Notification.Builder nb;
 	private String brightnessLevelToBeRestored;
 
 	@Override
@@ -70,9 +72,11 @@ public class BacklightSwitchService extends Service {
 		String notificationText = getNotificationText(brightnessLevel);
 		Intent i = new Intent(NOTIFICATION_ACTION, null, this, BacklightSwitchService.class);
 		PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
-		Notification n = new Notification.Builder(this).setSmallIcon(R.drawable.ic_launcher)
-				.setContentText(notificationText).setContentIntent(pi).setShowWhen(false)
-				.setPriority(Notification.PRIORITY_MIN).build();
+		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		nb = new Notification.Builder(this).setSmallIcon(R.drawable.ic_launcher).setContentText(notificationText)
+				.setContentIntent(pi).setShowWhen(false).setPriority(Notification.PRIORITY_MIN);
+		Notification n = nb.build();
+		nm.notify(NOTIFICATION_ID, n);
 		startForeground(NOTIFICATION_ID, n);
 	}
 
@@ -87,7 +91,8 @@ public class BacklightSwitchService extends Service {
 			brightnessLevelToBeRestored = brightnessLevel;
 			switchBacklightOff();
 			putDimmerOverTheScreen();
-			Toast.makeText(this, "Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Выключаю подсветку, буду восстанавливать" + brightnessLevelToBeRestored,
+					Toast.LENGTH_SHORT).show();
 			updateNotification();
 		}
 	}
@@ -189,12 +194,9 @@ public class BacklightSwitchService extends Service {
 	private void updateNotification() {
 		String brightnessLevel = getCurrentBrightnessLevel();
 		String notificationText = getNotificationText(brightnessLevel);
-		Intent i = new Intent(NOTIFICATION_ACTION, null, this, BacklightSwitchService.class);
-		PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
-		Notification n = new Notification.Builder(this).setSmallIcon(R.drawable.ic_launcher)
-				.setContentText(notificationText).setContentIntent(pi).setShowWhen(false)
-				.setPriority(Notification.PRIORITY_MIN).build();
-		startForeground(NOTIFICATION_ID, n);
+		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		nb.setContentText(notificationText);
+		nm.notify(NOTIFICATION_ID, nb.build());
 	}
 
 	@Override
